@@ -1,9 +1,13 @@
 import os
 import sys
 import serial
-import ctypes
 from serial.tools import list_ports
 
+try:
+	import ctypes
+except:
+	print('Warning: lock screen is only available on Windows')
+	
 def readArduino(ser, lock, ex):
 	buffer = ''
 	while 1:
@@ -12,7 +16,10 @@ def readArduino(ser, lock, ex):
 			print(b)
 			if b == '0':
 				if lock:
- 					ctypes.windll.user32.LockWorkStation()
+					if os.name == 'nt':
+ 						ctypes.windll.user32.LockWorkStation()
+ 					else:
+ 						print('Available only on Windows')
  				if ex:
  					quit()
 			b = ser.read();
