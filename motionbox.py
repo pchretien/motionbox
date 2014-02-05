@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import serial
 from serial.tools import list_ports
 
@@ -13,6 +14,7 @@ def readArduino(ser, lock, ex):
 	while 1:
 		b = ser.read()
 		while b:
+			print('state = '),
 			print(b)
 			if b == '0':
 				if lock:
@@ -44,8 +46,9 @@ def print_usage():
 	print
 	print('motionbox -p <SERIAL PORT> -b <BAUD RATE> [options]')
 	print('Options:')
-	print('  -l  Lock the computer screen on movement detection')
-	print('  -e  Exit the application on movement detection')
+	print('  -l       Lock the computer screen on movement detection')
+	print('  -e       Exit the application on movement detection')
+	print('  -w  <N>  Wait N seconds before to start')
 	print
 	print('Example (linux): motionbox -p ttyUSB0 -b 9600 -l -e')
 	print('Example (winows): motionbox -p COM6 -b 9600 -l')	
@@ -60,6 +63,7 @@ def main():
 		print_usage()
 		
 	ex = False
+	wait = 0
 	lock = False
 	port = 'COM6'
 	baud_rate = 9600
@@ -85,8 +89,20 @@ def main():
 			ex = True
 			print('Exit on motion detection')
 			continue
+			
+		if arg == '-w':
+			wait = int(sys.argv[i+1])
+			print('You have '+str(wait)+' seconds to get away of the motion detector')
+			continue
 	
 	ser = serial.Serial(port, baud_rate, timeout=0)
+	
+	if wait > 0:
+		for i in range(wait):
+			print(wait-i),
+			time.sleep(1)
+		print
+		print('Activated')
 	
 	readArduino(ser, lock, ex)
 	
