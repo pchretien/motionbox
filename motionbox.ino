@@ -107,7 +107,7 @@ void loop()
   if(abortLoop > 0)
   {
     abortLoop = 0; 
-    Serial.print("!"); Serial.println(mode, DEC);
+    //Serial.print("!"); Serial.println(mode, DEC);
   }
 }
 
